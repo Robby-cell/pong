@@ -136,7 +136,7 @@ impl Game {
             && self.ball.y >= self.player2.y - BALL_SIZE/2_f64 {
                 self.ball.collision(Direction::Right, self.player2.direction)
         }
-        
+
         if (self.ball.x + BALL_SIZE/2_f64 <= self.player1.x + PLAYER_WIDTH
             && self.ball.x + BALL_SIZE/2_f64 >= self.player1.x)
             && ((self.ball.y + BALL_SIZE >= self.player1.y - 5_f64
@@ -218,16 +218,16 @@ impl Ball {
         })
     }
 
-    fn collision(&mut self, what: Direction, what_move: Direction) {
+    fn collision(&mut self, what: Direction, what_direction: Direction) {
         match what {
             Direction::Up => self.y_dir = Direction::Down,
             Direction::Right => {
                 self.x_dir = Direction::Left;
 
-                if what_move == Direction::Still {
+                if what_direction == Direction::Still {
                     ()
                 }
-                else if self.y_dir == what_move {
+                else if self.y_dir == what_direction {
                     self.speedy *= 1.3;
                 }
                 else {
@@ -237,10 +237,10 @@ impl Ball {
             Direction::Left=> {
                 self.x_dir = Direction::Right;
 
-                if what_move == Direction::Still {
+                if what_direction == Direction::Still {
                     ()
                 }
-                else if self.y_dir == what_move {
+                else if self.y_dir == what_direction {
                     self.speedy *= 1.3;
                 }
                 else {
