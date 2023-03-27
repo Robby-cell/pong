@@ -42,11 +42,14 @@ fn main() {
             [1.0, 0.0, 0.0, 1.0],
             Direction::Still,
         ),
+        player1_points: 0,
+        player2_points: 0,
     };
 
     let mut events = Events::new(EventSettings::new().ups(60));
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
+            game.check_oob();
             game.check_collision();
             game.render(&r);
             game.update();
