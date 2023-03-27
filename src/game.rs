@@ -9,6 +9,7 @@ use opengl_graphics::GlGraphics;
 use piston::input::*;
 use rand::Rng;
 
+
 // CONSTANTS
 pub const SCREEN_WIDTH: u32 = 1920;
 pub const SCREEN_HEIGHT: u32 = 1020;
@@ -30,6 +31,7 @@ pub trait Drawable {
 pub struct Game {
     pub gl: GlGraphics,
     pub ball: Ball,
+    pub paused: bool,
     pub player1: Player,
     pub player2: Player,
     pub player1_points: u32,

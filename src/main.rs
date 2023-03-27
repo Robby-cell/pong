@@ -7,6 +7,7 @@ extern crate rand;
 mod game;
 
 use glutin_window::GlutinWindow;
+//use graphics::Context;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::{event_loop::*,
     input::*,
@@ -19,6 +20,7 @@ fn main() {
     let opengl = OpenGL::V4_2;
 
     let mut window: GlutinWindow = WindowSettings::new("Pong!", [SCREEN_WIDTH, SCREEN_WIDTH])
+        .vsync(true)
         .opengl(opengl)
         .exit_on_esc(true)
         .build()
@@ -27,6 +29,7 @@ fn main() {
 
     let mut game = Game {
         gl: GlGraphics::new(opengl),
+        paused: false,
         ball: Ball::new(),
         player1: Player::new(
             50_f64,
@@ -47,12 +50,18 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new().ups(60));
+    
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
-            game.check_oob();
-            game.check_collision();
-            game.render(&r);
-            game.update();
+            if !game.paused {
+                game.check_oob();
+                game.check_collision();
+                game.render(&r);
+                game.update();
+            }
+            else {
+                continue;
+            }
         };
 
         if let Some(k) = e.button_args() {
