@@ -5,6 +5,7 @@ extern crate piston;
 extern crate rand;
 
 mod game;
+mod menu;
 
 use glutin_window::GlutinWindow;
 //use graphics::Context;
@@ -14,6 +15,7 @@ use piston::{event_loop::*,
     window::WindowSettings};
 
 use game::*;
+use menu::*;
 
 
 fn main() {
@@ -29,7 +31,7 @@ fn main() {
 
     let mut game = Game {
         gl: GlGraphics::new(opengl),
-        paused: false,
+        paused: true,
         ball: Ball::new(),
         player1: Player::new(
             50_f64,
@@ -50,6 +52,13 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new().ups(60));
+
+    let mut menu = Menu {
+        gl: GlGraphics::new(OpenGL::V4_3),
+        score_p1: "2", 
+        score_p2: "3",
+        instructions: "test message or just like that",
+    };
     
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
@@ -60,7 +69,8 @@ fn main() {
                 game.update();
             }
             else {
-                continue;
+                menu.clear_screen();
+                menu.render(&r);
             }
         };
 
