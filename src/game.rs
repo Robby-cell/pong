@@ -11,7 +11,7 @@ use rand::Rng;
 
 // CONSTANTS
 pub const SCREEN_WIDTH: u32 = 1920;
-pub const SCREEN_HEIGHT: u32 = 1000;
+pub const SCREEN_HEIGHT: u32 = 1020;
 
 pub const PLAYER_WIDTH: f64 = 40_f64;
 pub const PLAYER_HEIGHT: f64 = 70_f64;
@@ -21,6 +21,10 @@ pub const BALL_SPEED_Y_DEFAULT: f64 = 1_f64;
 pub const BALL_SPEED_X_DEFAULT: f64 = 7_f64;
 const TOLERANCE: f64 = 4_f64;
 // END OF CONSTANTS
+
+pub trait Drawable {
+    fn draw(&mut self, gl: &mut GlGraphics, args: &RenderArgs);
+}
 
 
 pub struct Game {
@@ -130,13 +134,13 @@ impl Game {
             && self.ball.x <= self.player1.x + PLAYER_WIDTH + TOLERANCE
             && self.ball.y <= self.player1.y + PLAYER_HEIGHT - BALL_SIZE/2_f64
             && self.ball.y >= self.player1.y - BALL_SIZE/2_f64 {
-                self.ball.collision_player(Direction::Left, self.player1.direction)
+                self.ball.collision_player(Direction::Left, self.player1.direction, &self.player1.speed)
         }
         else if self.ball.x >= self.player2.x - BALL_SIZE - TOLERANCE
             && self.ball.x <= self.player2.x - BALL_SIZE + TOLERANCE
             && self.ball.y <= self.player2.y + PLAYER_HEIGHT - BALL_SIZE/2_f64
             && self.ball.y >= self.player2.y - BALL_SIZE/2_f64 {
-                self.ball.collision_player(Direction::Right, self.player2.direction)
+                self.ball.collision_player(Direction::Right, self.player2.direction, &self.player2.speed)
         }
 
         if (self.ball.x + BALL_SIZE/2_f64 <= self.player1.x + PLAYER_WIDTH
@@ -246,18 +250,6 @@ impl Ball {
         }
     }
 
-    fn draw(&mut self, gl: &mut GlGraphics, args: &RenderArgs) {
-        let ball_color: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-
-        let square = graphics::rectangle::square(self.x, self.y, BALL_SIZE);
-
-        gl.draw(args.viewport(), |c, gl| {
-            let transform = c.transform;
-
-            graphics::ellipse(ball_color, square, transform, gl)
-        })
-    }
-
     fn collision(&mut self, what: Direction) {
         match what {
             Direction::Up => self.y_dir = Direction::Down,
@@ -267,12 +259,12 @@ impl Ball {
         }
     }
 
-    fn collision_player(&mut self, what: Direction, what_direction: Direction) {
+    fn collision_player(&mut self, what: Direction, what_direction: Direction, speed: &f64) {
         if self.y_dir == what_direction {
-            self.speedy *= 1.3;
+            self.speedy += speed/5_f64;
         }
         else if self.y_dir != what_direction && what_direction != Direction::Still {
-            self.speedy /= 1.25;
+            self.speedy -= speed/5_f64;
         }
 
         match what {
@@ -305,6 +297,20 @@ impl Ball {
     }
 }
 
+impl Drawable for Ball {
+    fn draw(&mut self, gl: &mut GlGraphics, args: &RenderArgs) {
+        let ball_color: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
+
+        let square = graphics::rectangle::square(self.x, self.y, BALL_SIZE);
+
+        gl.draw(args.viewport(), |c, gl| {
+            let transform = c.transform;
+
+            graphics::ellipse(ball_color, square, transform, gl)
+        })
+    }
+}
+
 pub struct Player {
     x: f64,
     y: f64,
@@ -317,7 +323,9 @@ impl Player {
     pub fn new(x: f64, y: f64, speed: f64, color: [f32; 4], direction: Direction) -> Self {
         Player { x, y, speed, color, direction }
     }
+}
 
+impl Drawable for Player {
     fn draw(&mut self, gl: &mut GlGraphics, args: &RenderArgs) {
         let rectangle = graphics::rectangle::rectangle_by_corners(
             self.x,
