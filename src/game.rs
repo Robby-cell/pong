@@ -4,11 +4,9 @@ extern crate opengl_graphics;
 extern crate piston;
 extern crate rand;
 
-
 use opengl_graphics::GlGraphics;
 use piston::input::*;
 use rand::Rng;
-
 
 // CONSTANTS
 pub const SCREEN_WIDTH: u32 = 1920;
@@ -26,7 +24,6 @@ const TOLERANCE: f64 = 4_f64;
 pub trait Drawable {
     fn draw(&mut self, gl: &mut GlGraphics, args: &RenderArgs);
 }
-
 
 pub struct Game {
     pub gl: GlGraphics,
@@ -87,19 +84,11 @@ impl Game {
 
     pub fn pressed(&mut self, btn: &Button) {
         match btn {
-            &Button::Keyboard(Key::W) => {
-                self.player1.direction = Direction::Up
-            },
-            &Button::Keyboard(Key::S) => {
-                self.player1.direction = Direction::Down
-            },
+            &Button::Keyboard(Key::W) => self.player1.direction = Direction::Up,
+            &Button::Keyboard(Key::S) => self.player1.direction = Direction::Down,
 
-            &Button::Keyboard(Key::I) => {
-                self.player2.direction = Direction::Up
-            },
-            &Button::Keyboard(Key::K) => {
-                self.player2.direction = Direction::Down
-            },
+            &Button::Keyboard(Key::I) => self.player2.direction = Direction::Up,
+            &Button::Keyboard(Key::K) => self.player2.direction = Direction::Down,
 
             _ => (),
         }
@@ -107,19 +96,11 @@ impl Game {
 
     pub fn released(&mut self, btn: &Button) {
         match btn {
-            &Button::Keyboard(Key::W) => {
-                self.player1.direction = Direction::Still
-            },
-            &Button::Keyboard(Key::S) => {
-                self.player1.direction = Direction::Still
-            },
+            &Button::Keyboard(Key::W) => self.player1.direction = Direction::Still,
+            &Button::Keyboard(Key::S) => self.player1.direction = Direction::Still,
 
-            &Button::Keyboard(Key::I) => {
-                self.player2.direction = Direction::Still
-            },
-            &Button::Keyboard(Key::K) => {
-                self.player2.direction = Direction::Still
-            },
+            &Button::Keyboard(Key::I) => self.player2.direction = Direction::Still,
+            &Button::Keyboard(Key::K) => self.player2.direction = Direction::Still,
 
             _ => (),
         }
@@ -128,69 +109,68 @@ impl Game {
     pub fn check_collision(&mut self) {
         if self.ball.y <= 0_f64 {
             self.ball.collision(Direction::Up)
-        }
-        else if self.ball.y >= SCREEN_HEIGHT as f64 - BALL_SIZE {
+        } else if self.ball.y >= SCREEN_HEIGHT as f64 - BALL_SIZE {
             self.ball.collision(Direction::Down)
-        }
-        else if self.ball.x >= self.player1.x + PLAYER_WIDTH - TOLERANCE
+        } else if self.ball.x >= self.player1.x + PLAYER_WIDTH - TOLERANCE
             && self.ball.x <= self.player1.x + PLAYER_WIDTH + TOLERANCE
-            && self.ball.y <= self.player1.y + PLAYER_HEIGHT - BALL_SIZE/2_f64
-            && self.ball.y >= self.player1.y - BALL_SIZE/2_f64 {
-                self.ball.collision_player(Direction::Left, self.player1.direction, &self.player1.speed)
-        }
-        else if self.ball.x >= self.player2.x - BALL_SIZE - TOLERANCE
+            && self.ball.y <= self.player1.y + PLAYER_HEIGHT - BALL_SIZE / 2_f64
+            && self.ball.y >= self.player1.y - BALL_SIZE / 2_f64
+        {
+            self.ball
+                .collision_player(Direction::Left, self.player1.direction, &self.player1.speed)
+        } else if self.ball.x >= self.player2.x - BALL_SIZE - TOLERANCE
             && self.ball.x <= self.player2.x - BALL_SIZE + TOLERANCE
-            && self.ball.y <= self.player2.y + PLAYER_HEIGHT - BALL_SIZE/2_f64
-            && self.ball.y >= self.player2.y - BALL_SIZE/2_f64 {
-                self.ball.collision_player(Direction::Right, self.player2.direction, &self.player2.speed)
+            && self.ball.y <= self.player2.y + PLAYER_HEIGHT - BALL_SIZE / 2_f64
+            && self.ball.y >= self.player2.y - BALL_SIZE / 2_f64
+        {
+            self.ball.collision_player(
+                Direction::Right,
+                self.player2.direction,
+                &self.player2.speed,
+            )
         }
 
-        if (self.ball.x + BALL_SIZE/2_f64 <= self.player1.x + PLAYER_WIDTH
-            && self.ball.x + BALL_SIZE/2_f64 >= self.player1.x)
+        if (self.ball.x + BALL_SIZE / 2_f64 <= self.player1.x + PLAYER_WIDTH
+            && self.ball.x + BALL_SIZE / 2_f64 >= self.player1.x)
             && ((self.ball.y + BALL_SIZE >= self.player1.y - TOLERANCE
-            && self.ball.y + BALL_SIZE <= self.player1.y + TOLERANCE)
-            || ( self.ball.y >= self.player1.y + PLAYER_HEIGHT - TOLERANCE
-            && self.ball.y <= self.player1.y + PLAYER_HEIGHT + TOLERANCE))
+                && self.ball.y + BALL_SIZE <= self.player1.y + TOLERANCE)
+                || (self.ball.y >= self.player1.y + PLAYER_HEIGHT - TOLERANCE
+                    && self.ball.y <= self.player1.y + PLAYER_HEIGHT + TOLERANCE))
         {
-                self.ball.speedy += match self.player1.direction {
-                    Direction::Down => self.player1.speed,
-                    Direction::Up => self.player1.speed,
-                    _ => 0_f64,
-                };
-                if self.ball.y  >= self.player1.y + PLAYER_HEIGHT/2_f64 {
-                    self.ball.end_collision(Direction::Down)
-                }
-                else {
-                    self.ball.end_collision(Direction::Up)
-                }
-        }
-        else if (self.ball.x + BALL_SIZE/2_f64 <= self.player2.x + PLAYER_WIDTH
-            && self.ball.x + BALL_SIZE/2_f64 >= self.player2.x)
+            self.ball.speedy += match self.player1.direction {
+                Direction::Down => self.player1.speed,
+                Direction::Up => self.player1.speed,
+                _ => 0_f64,
+            };
+            if self.ball.y >= self.player1.y + PLAYER_HEIGHT / 2_f64 {
+                self.ball.end_collision(Direction::Down)
+            } else {
+                self.ball.end_collision(Direction::Up)
+            }
+        } else if (self.ball.x + BALL_SIZE / 2_f64 <= self.player2.x + PLAYER_WIDTH
+            && self.ball.x + BALL_SIZE / 2_f64 >= self.player2.x)
             && ((self.ball.y + BALL_SIZE >= self.player2.y - TOLERANCE
-            && self.ball.y + BALL_SIZE <= self.player2.y + TOLERANCE)
-            || ( self.ball.y >= self.player2.y + PLAYER_HEIGHT - TOLERANCE
-            && self.ball.y <= self.player2.y + PLAYER_HEIGHT + TOLERANCE))
+                && self.ball.y + BALL_SIZE <= self.player2.y + TOLERANCE)
+                || (self.ball.y >= self.player2.y + PLAYER_HEIGHT - TOLERANCE
+                    && self.ball.y <= self.player2.y + PLAYER_HEIGHT + TOLERANCE))
         {
-                self.ball.speedy += match self.player2.direction {
-                    Direction::Down => self.player2.speed,
-                    Direction::Up => self.player2.speed,
-                    _ => 0_f64,
-                };
-                if self.ball.y  >= self.player2.y + PLAYER_HEIGHT/2_f64 {
-                    self.ball.end_collision(Direction::Down)
-                }
-                else {
-                    self.ball.end_collision(Direction::Up)
-                }
-        }
-        else if self.ball.x >= self.player1.x + PLAYER_WIDTH - BALL_SIZE
+            self.ball.speedy += match self.player2.direction {
+                Direction::Down => self.player2.speed,
+                Direction::Up => self.player2.speed,
+                _ => 0_f64,
+            };
+            if self.ball.y >= self.player2.y + PLAYER_HEIGHT / 2_f64 {
+                self.ball.end_collision(Direction::Down)
+            } else {
+                self.ball.end_collision(Direction::Up)
+            }
+        } else if self.ball.x >= self.player1.x + PLAYER_WIDTH - BALL_SIZE
             && self.ball.x <= self.player1.x + PLAYER_WIDTH
             && self.ball.y >= self.player1.y + PLAYER_HEIGHT - BALL_SIZE
             && self.ball.y <= self.player1.y + PLAYER_HEIGHT
         {
             self.ball.corner_collision(Direction::Left, Direction::Up)
-        }
-        else if self.ball.x >= self.player2.x + PLAYER_WIDTH - BALL_SIZE
+        } else if self.ball.x >= self.player2.x + PLAYER_WIDTH - BALL_SIZE
             && self.ball.x <= self.player2.x + PLAYER_WIDTH
             && self.ball.y >= self.player2.y - BALL_SIZE
             && self.ball.y <= self.player2.y
@@ -203,9 +183,7 @@ impl Game {
         if self.ball.x + BALL_SIZE + 2_f64 < 0_f64 {
             self.player2_points += 1;
             self.ball = Ball::new();
-        }
-        else if self.ball.x > (SCREEN_WIDTH +2) as f64
-        {
+        } else if self.ball.x > (SCREEN_WIDTH + 2) as f64 {
             self.player1_points += 1;
             self.ball = Ball::new();
         }
@@ -263,17 +241,16 @@ impl Ball {
 
     fn collision_player(&mut self, what: Direction, what_direction: Direction, speed: &f64) {
         if self.y_dir == what_direction {
-            self.speedy += speed/5_f64;
-        }
-        else if self.y_dir != what_direction && what_direction != Direction::Still {
-            self.speedy -= speed/5_f64;
+            self.speedy += speed / 5_f64;
+        } else if self.y_dir != what_direction && what_direction != Direction::Still {
+            self.speedy -= speed / 5_f64;
         }
 
         match what {
             Direction::Right => {
                 self.x_dir = Direction::Left;
-            },
-            Direction::Left=> {
+            }
+            Direction::Left => {
                 self.x_dir = Direction::Right;
             }
             _ => (),
@@ -323,7 +300,13 @@ pub struct Player {
 
 impl Player {
     pub fn new(x: f64, y: f64, speed: f64, color: [f32; 4], direction: Direction) -> Self {
-        Player { x, y, speed, color, direction }
+        Player {
+            x,
+            y,
+            speed,
+            color,
+            direction,
+        }
     }
 }
 

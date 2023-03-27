@@ -4,21 +4,19 @@ extern crate opengl_graphics;
 extern crate piston;
 extern crate rand;
 
-
-use graphics::color;
-use opengl_graphics::GlGraphics;
-use piston::input::*;
-use opengl_graphics::GlyphCache;
-use opengl_graphics::TextureSettings;
-use opengl_graphics::Filter;
-use graphics::text;
 use crate::graphics::Transformed;
-
+use graphics::color;
+use graphics::glyph_cache::rusttype::GlyphCache;
+use graphics::text;
+use opengl_graphics::Filter;
+use opengl_graphics::GlGraphics;
+use opengl_graphics::TextureSettings;
+use piston::input::*;
 
 pub struct Menu<'a> {
     pub gl: GlGraphics,
-    pub score_p1: String,
-    pub score_p2: String,
+    pub score_p1: Box<u32>,
+    pub score_p2: Box<u32>,
 
     instructions1: &'a str,
     instructions2: &'a str,
@@ -26,12 +24,11 @@ pub struct Menu<'a> {
 }
 
 impl<'a> Menu<'a> {
-
-    pub fn new(gl: GlGraphics, score_p1: String, score_p2: String) -> Self {
+    pub fn new(gl: GlGraphics, score_p1: u32, score_p2: u32) -> Self {
         Menu {
             gl,
-            score_p1,
-            score_p2,
+            score_p1: Box::new(score_p1),
+            score_p2: Box::new(score_p2),
 
             instructions1: "12345678901234567890",
             instructions2: "test 2",
@@ -39,25 +36,37 @@ impl<'a> Menu<'a> {
         }
     }
 
+    pub fn update_score(&mut self, which_player: u8) {
+        match which_player {
+            1 => *self.score_p1 += 1,
+            2 => *self.score_p2 += 1,
+            _ => (),
+        }
+    }
+
     pub fn clear_screen(&mut self) {
         graphics::clear(color::BLACK, &mut self.gl)
     }
 
-    pub fn render(&mut self, args: &RenderArgs) {
+    pub fn render(
+        &mut self,
+        args: &RenderArgs,
+    ) -> std::result::Result<(), Box<dyn std::error::Error>> {
         self.gl.draw(args.viewport(), |c, gl| {
             let transform = c.transform.trans(800., 780.);
             let texture_settings = TextureSettings::new().filter(Filter::Nearest);
 
-            let ref mut glyphs = GlyphCache::new("assets/text.ttf", (), texture_settings)
-                .expect("Could not load font");
+            let ref mut glyphs = GlyphCache::new("assets/text.ttf", (), texture_settings)?;
+            //.expect("Could not load font");
 
-
-            graphics::text([0., 1., 0., 1.],
+            graphics::text(
+                [0., 1., 0., 1.],
                 32,
                 self.instructions1,
                 glyphs,
                 transform,
-                gl).unwrap();
+                gl,
+            )?;
 
             /*
             text::Text::new_color([0.0, 1.0, 0.0, 1.0], 32).draw(
@@ -67,6 +76,7 @@ impl<'a> Menu<'a> {
                 transform, gl
             ).unwrap();
             */
+            Ok(())
         })
     }
 }

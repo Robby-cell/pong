@@ -10,13 +10,10 @@ mod menu;
 use glutin_window::GlutinWindow;
 //use graphics::Context;
 use opengl_graphics::{GlGraphics, OpenGL};
-use piston::{event_loop::*,
-    input::*,
-    window::WindowSettings};
+use piston::{event_loop::*, input::*, window::WindowSettings};
 
 use game::*;
 use menu::*;
-
 
 fn main() {
     let opengl = OpenGL::V4_2;
@@ -53,11 +50,8 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new().ups(60));
 
-    let sp1 = String::from("0");
-    let sp2 = String::from("0");
+    let mut menu = Menu::new(GlGraphics::new(OpenGL::V4_4), 0, 0);
 
-    let mut menu = Menu::new(GlGraphics::new(OpenGL::V4_4), sp1, sp2);
-    
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
             if !game.paused {
@@ -65,10 +59,9 @@ fn main() {
                 game.check_collision();
                 game.render(&r);
                 game.update();
-            }
-            else {
+            } else {
                 menu.clear_screen();
-                menu.render(&r);
+                menu.render(&r).expect("failed to render menu");
             }
         };
 
