@@ -31,7 +31,7 @@ fn main() {
 
     let mut game = Game {
         gl: GlGraphics::new(opengl),
-        paused: true,
+        paused: false,
         ball: Ball::new(),
         player1: Player::new(
             50_f64,
@@ -53,12 +53,10 @@ fn main() {
 
     let mut events = Events::new(EventSettings::new().ups(60));
 
-    let mut menu = Menu {
-        gl: GlGraphics::new(OpenGL::V4_3),
-        score_p1: "2", 
-        score_p2: "3",
-        instructions: "test message or just like that",
-    };
+    let sp1 = String::from("0");
+    let sp2 = String::from("0");
+
+    let mut menu = Menu::new(GlGraphics::new(OpenGL::V4_4), sp1, sp2);
     
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
