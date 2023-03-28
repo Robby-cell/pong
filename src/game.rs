@@ -90,6 +90,8 @@ impl Game {
             &Button::Keyboard(Key::I) => self.player2.direction = Direction::Up,
             &Button::Keyboard(Key::K) => self.player2.direction = Direction::Down,
 
+            &Button::Keyboard(Key::Space) => self.paused = !self.paused,
+
             _ => (),
         }
     }
