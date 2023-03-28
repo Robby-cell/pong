@@ -15,7 +15,7 @@ use piston::{event_loop::*, input::*, window::WindowSettings};
 use game::*;
 use menu::*;
 
-fn main() {
+fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let opengl = OpenGL::V4_2;
 
     let mut window: GlutinWindow = WindowSettings::new("Pong!", [SCREEN_WIDTH, SCREEN_WIDTH])
@@ -60,19 +60,37 @@ fn main() {
                 game.render(&r);
                 game.update();
             } else {
-                menu.clear_screen();
-                menu.render(&r).expect("failed to render menu");
+                //menu.clear_screen();
+                game.render(&r);
+                *menu.score_p1 = game.player1_points;
+                *menu.score_p2 = game.player2_points;
+                
+                menu.render(&r, (752., 600.), menu.instruction1)?;
+                menu.render(&r, (1574., 120.), menu.instruction2)?;
             }
         };
 
         if let Some(k) = e.button_args() {
             if k.state == ButtonState::Press {
-                game.pressed(&k.button);
+                if !game.paused || &k.button == &Button::Keyboard(Key::Space) {
+                    game.pressed(&k.button);
+                }
+                else {
+                    menu.pressed(&k.button);
+                }
             }
 
             if k.state == ButtonState::Release {
-                game.released(&k.button);
+                if !game.paused {
+                    game.released(&k.button);
+                }
+                else {
+                    // something
+                }
             }
         };
     }
+
+    Ok(())
+
 }
