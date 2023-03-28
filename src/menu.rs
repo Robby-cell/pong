@@ -7,20 +7,21 @@ extern crate rand;
 use crate::graphics::Transformed;
 use graphics::color;
 use graphics::glyph_cache::rusttype::GlyphCache;
-use graphics::text;
+//use graphics::text;
 use opengl_graphics::Filter;
 use opengl_graphics::GlGraphics;
 use opengl_graphics::TextureSettings;
 use piston::input::*;
+
 
 pub struct Menu<'a> {
     pub gl: GlGraphics,
     pub score_p1: Box<u32>,
     pub score_p2: Box<u32>,
 
-    instructions1: &'a str,
-    instructions2: &'a str,
-    instructions3: &'a str,
+    pub instruction1: &'a str,
+    pub instruction2: &'a str,
+    pub instruction3: &'a str,
 }
 
 impl<'a> Menu<'a> {
@@ -30,20 +31,13 @@ impl<'a> Menu<'a> {
             score_p1: Box::new(score_p1),
             score_p2: Box::new(score_p2),
 
-            instructions1: "12345678901234567890",
-            instructions2: "test 2",
-            instructions3: "test 3",
+            instruction1: "unpause [space] ",
+            instruction2: "quit [q] ",
+            instruction3: "test 3 ",
         }
     }
 
-    pub fn update_score(&mut self, which_player: u8) {
-        match which_player {
-            1 => *self.score_p1 += 1,
-            2 => *self.score_p2 += 1,
-            _ => (),
-        }
-    }
-
+    #[allow(unused)]
     pub fn clear_screen(&mut self) {
         graphics::clear(color::BLACK, &mut self.gl)
     }
@@ -51,9 +45,12 @@ impl<'a> Menu<'a> {
     pub fn render(
         &mut self,
         args: &RenderArgs,
+        position: (f64, f64),
+        what: &str,
     ) -> std::result::Result<(), Box<dyn std::error::Error>> {
+
         self.gl.draw(args.viewport(), |c, gl| {
-            let transform = c.transform.trans(800., 780.);
+            let transform = c.transform.trans(position.0, position.1);
             let texture_settings = TextureSettings::new().filter(Filter::Nearest);
 
             let ref mut glyphs = GlyphCache::new("assets/text.ttf", (), texture_settings)?;
@@ -62,7 +59,7 @@ impl<'a> Menu<'a> {
             graphics::text(
                 [0., 1., 0., 1.],
                 32,
-                self.instructions1,
+                what,
                 glyphs,
                 transform,
                 gl,
@@ -78,5 +75,13 @@ impl<'a> Menu<'a> {
             */
             Ok(())
         })
+    }
+
+    pub fn pressed(&mut self, btn: &Button) {
+        match btn {
+            &Button::Keyboard(Key::Q) => std::process::exit(0),
+
+            _ => (),
+        }
     }
 }
