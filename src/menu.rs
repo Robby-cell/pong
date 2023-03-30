@@ -38,6 +38,10 @@ impl<'a> Menu<'a> {
 
     #[allow(unused)]
     pub fn clear_screen(&mut self) {
+        //
+        // THIS FUNCTION MOST LIKELY WILL NOT BE USED SINCE WE WANT TO DISPLAY THE GAME IN THE BACKGROUND
+        // SO CLEARING THE SCREEN SIMPLY WOULD NOT MAKE SENSE
+        //
         graphics::clear(color::BLACK, &mut self.gl)
     }
 
@@ -53,7 +57,7 @@ impl<'a> Menu<'a> {
             let texture_settings = TextureSettings::new().filter(Filter::Nearest);
 
             let ref mut glyphs = GlyphCache::new("assets/text.ttf", (), texture_settings)?;
-            //.expect("Could not load font");
+            //.expect("Could not load font"); // We wont use this, since we have '?', which will exit function if it wants to give us an error
 
             graphics::text(
                 [0., 0.3, 0.6, 1.],

@@ -6,6 +6,7 @@ extern crate rand;
 
 mod game;
 mod menu;
+mod leaderboard;
 
 use glutin_window::GlutinWindow;
 //use graphics::Context;
@@ -15,6 +16,7 @@ use piston::{event_loop::*, input::*, window::WindowSettings};
 use game::*;
 use menu::*;
 
+
 enum GameState {
     Running,
     Paused,
@@ -23,7 +25,7 @@ enum GameState {
 
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
 
-    let opengl = OpenGL::V4_2;
+    let opengl: OpenGL = OpenGL::V4_2;
 
     let mut window: GlutinWindow = WindowSettings::new("Pong!", [SCREEN_WIDTH, SCREEN_WIDTH])
         .vsync(true)
@@ -58,6 +60,8 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
     let mut menu = Menu::new(GlGraphics::new(OpenGL::V4_4));
 
     let mut state = GameState::Running;
+
+    let players = leaderboard::Leaderboard::new();
 
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
