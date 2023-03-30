@@ -4,6 +4,7 @@ extern crate opengl_graphics;
 extern crate piston;
 extern crate rand;
 
+use crate::game::SCREEN_WIDTH;
 use crate::graphics::Transformed;
 use graphics::color;
 use graphics::glyph_cache::rusttype::GlyphCache;
@@ -13,11 +14,11 @@ use opengl_graphics::GlGraphics;
 use opengl_graphics::TextureSettings;
 use piston::input::*;
 
+pub const TEXT_SIZE: f64 = 32_f64;
+
 
 pub struct Menu<'a> {
     pub gl: GlGraphics,
-    pub score_p1: Box<u32>,
-    pub score_p2: Box<u32>,
 
     pub instruction1: &'a str,
     pub instruction2: &'a str,
@@ -25,15 +26,13 @@ pub struct Menu<'a> {
 }
 
 impl<'a> Menu<'a> {
-    pub fn new(gl: GlGraphics, score_p1: u32, score_p2: u32) -> Self {
+    pub fn new(gl: GlGraphics) -> Self {
         Menu {
             gl,
-            score_p1: Box::new(score_p1),
-            score_p2: Box::new(score_p2),
 
-            instruction1: "unpause [space] ",
-            instruction2: "quit [q] ",
-            instruction3: "test 3 ",
+            instruction1: "Resume [space] ",
+            instruction2: "Quit [Q] ",
+            instruction3: "Scoreboard [S] ",
         }
     }
 
@@ -46,7 +45,7 @@ impl<'a> Menu<'a> {
         &mut self,
         args: &RenderArgs,
         position: (f64, f64),
-        what: &str,
+        what: String,
     ) -> std::result::Result<(), Box<dyn std::error::Error>> {
 
         self.gl.draw(args.viewport(), |c, gl| {
@@ -57,9 +56,9 @@ impl<'a> Menu<'a> {
             //.expect("Could not load font");
 
             graphics::text(
-                [0., 1., 0., 1.],
-                32,
-                what,
+                [0., 0.3, 0.6, 1.],
+                TEXT_SIZE as u32,
+                &what,
                 glyphs,
                 transform,
                 gl,
@@ -83,5 +82,10 @@ impl<'a> Menu<'a> {
 
             _ => (),
         }
+    }
+
+    #[allow(warnings)]
+    pub fn get_centre(& self, word: &'a str,  LETTER_SIZE: f64) -> f64 {
+        SCREEN_WIDTH as f64/2_f64 - ((word.len() + 1) as f64 * LETTER_SIZE)/2_f64
     }
 }

@@ -7,6 +7,7 @@ extern crate rand;
 use opengl_graphics::GlGraphics;
 use piston::input::*;
 use rand::Rng;
+//use crate::menu;
 
 // CONSTANTS
 pub const SCREEN_WIDTH: u32 = 1920;
@@ -31,12 +32,10 @@ pub struct Game {
     pub paused: bool,
     pub player1: Player,
     pub player2: Player,
-    pub player1_points: u32,
-    pub player2_points: u32,
 }
 
 impl Game {
-    
+
     pub fn render(&mut self, args: &RenderArgs) {
         self.gl.draw(args.viewport(), |_c, gl| {
             graphics::clear(graphics::color::BLACK, gl)
@@ -90,8 +89,6 @@ impl Game {
 
             &Button::Keyboard(Key::I) => self.player2.direction = Direction::Up,
             &Button::Keyboard(Key::K) => self.player2.direction = Direction::Down,
-
-            &Button::Keyboard(Key::Space) => self.paused = !self.paused,
 
             _ => (),
         }
@@ -184,10 +181,10 @@ impl Game {
 
     pub fn check_oob(&mut self) {
         if self.ball.x + BALL_SIZE + 2_f64 < 0_f64 {
-            self.player2_points += 1;
+            self.player2.points += 1;
             self.ball = Ball::new();
         } else if self.ball.x > (SCREEN_WIDTH + 2) as f64 {
-            self.player1_points += 1;
+            self.player1.points += 1;
             self.ball = Ball::new();
         }
     }
@@ -299,6 +296,7 @@ pub struct Player {
     speed: f64,
     color: [f32; 4],
     direction: Direction,
+    pub points: u32,
 }
 
 impl Player {
@@ -309,6 +307,7 @@ impl Player {
             speed,
             color,
             direction,
+            points: 0,
         }
     }
 }
