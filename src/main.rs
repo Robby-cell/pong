@@ -9,6 +9,7 @@ mod menu;
 mod leaderboard;
 
 use glutin_window::GlutinWindow;
+use leaderboard::Leaderboard;
 //use graphics::Context;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::{event_loop::*, input::*, window::WindowSettings};
@@ -53,6 +54,8 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
             Direction::Still,
         ),
     };
+
+    let test = Leaderboard::new();
 
     let mut events: Events = Events::new(EventSettings::new().ups(60));
 
