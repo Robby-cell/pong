@@ -35,9 +35,8 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         .ok()
         .unwrap();
 
-    let mut game = Game {
+    let mut game: Game = Game {
         gl: GlGraphics::new(opengl),
-        paused: false,
         ball: Ball::new(),
         player1: Player::new(
             50_f64,
@@ -55,13 +54,11 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         ),
     };
 
-    let mut events = Events::new(EventSettings::new().ups(60));
+    let mut events: Events = Events::new(EventSettings::new().ups(60));
 
-    let mut menu = Menu::new(GlGraphics::new(OpenGL::V4_4));
+    let mut menu: Menu = Menu::new(GlGraphics::new(OpenGL::V4_4));
 
-    let mut state = GameState::Running;
-
-    let players = leaderboard::Leaderboard::new();
+    let mut state: GameState = GameState::Running;
 
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
@@ -96,8 +93,6 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
                     GameState::Running => {
                         if &k.button == &Button::Keyboard(Key::Space) {
                             state = GameState::Paused;
-                            //*menu.score_p1 = game.player1.points;
-                            //*menu.score_p2 = game.player2.points;
                         }
                         else {
                             game.pressed(&k.button);

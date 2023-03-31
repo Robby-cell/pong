@@ -29,7 +29,6 @@ pub trait Drawable {
 pub struct Game {
     pub gl: GlGraphics,
     pub ball: Ball,
-    pub paused: bool,
     pub player1: Player,
     pub player2: Player,
 }
