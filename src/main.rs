@@ -54,7 +54,7 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         ),
     };
 
-    //let mut lb = leaderboard::Leaderboard::new()?;
+    //let mut lb = leaderboard::Leaderboard::new()?; // we are not currently using this feature
 
     let mut events: Events = Events::new(EventSettings::new().ups(60));
 
