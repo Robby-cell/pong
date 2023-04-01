@@ -9,13 +9,12 @@ mod menu;
 mod leaderboard;
 
 use glutin_window::GlutinWindow;
-use leaderboard::Leaderboard;
 //use graphics::Context;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::{event_loop::*, input::*, window::WindowSettings};
 
-use game::*;
-use menu::*;
+use crate::game::*;
+use crate::menu::*;
 
 
 enum GameState {
@@ -55,7 +54,7 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
         ),
     };
 
-    let test = Leaderboard::new();
+    //let mut lb = leaderboard::Leaderboard::new()?;
 
     let mut events: Events = Events::new(EventSettings::new().ups(60));
 
