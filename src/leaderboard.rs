@@ -41,6 +41,4 @@ impl Top_Player {
     pub fn add(&self) {
         todo!("add the player to top_players.json")
     }
-
-
 }
