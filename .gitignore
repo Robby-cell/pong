@@ -1,4 +1,4 @@
 /target
 Cargo.lock
 assets/top_players.json
-src/leaderboard.rs
+src\leaderboard.rs
