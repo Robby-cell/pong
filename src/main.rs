@@ -6,7 +6,7 @@ extern crate rand;
 
 mod game;
 mod menu;
-mod leaderboard;
+//mod leaderboard;
 
 use glutin_window::GlutinWindow;
 //use graphics::Context;
