@@ -16,7 +16,6 @@ use piston::{event_loop::*, input::*, window::WindowSettings};
 use crate::game::*;
 use crate::menu::*;
 
-
 enum GameState {
     Running,
     Paused,
@@ -24,7 +23,6 @@ enum GameState {
 }
 
 fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
-
     let opengl: OpenGL = OpenGL::V4_2;
 
     let mut window: GlutinWindow = WindowSettings::new("Pong!", [SCREEN_WIDTH, SCREEN_WIDTH])
@@ -64,28 +62,46 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
 
     while let Some(e) = events.next(&mut window) {
         if let Some(r) = e.render_args() {
-
             match state {
                 GameState::Running => {
                     game.check_oob();
                     game.check_collision();
                     game.render(&r);
                     game.update();
-                },
+                }
                 GameState::Paused => {
                     game.render(&r);
 
-                    menu.render(&r, (menu.get_centre(menu.instruction1, TEXT_SIZE), 600.), format!("{}", menu.instruction1))?;
-                    menu.render(&r, (menu.get_centre(menu.instruction2, TEXT_SIZE), 400.), format!("{}", menu.instruction2))?;
+                    menu.render(
+                        &r,
+                        (menu.get_centre(menu.instruction1, TEXT_SIZE), 600.),
+                        format!("{}", menu.instruction1),
+                    )?;
+                    menu.render(
+                        &r,
+                        (menu.get_centre(menu.instruction2, TEXT_SIZE), 400.),
+                        format!("{}", menu.instruction2),
+                    )?;
 
-                    menu.render(&r, (TEXT_SIZE*3_f64, 150.), format!("{} ", game.player1.points))?;
+                    menu.render(
+                        &r,
+                        (TEXT_SIZE * 3_f64, 150.),
+                        format!("{} ", game.player1.points),
+                    )?;
 
                     let p2pnts = format!("{} ", game.player2.points);
-                    menu.render(&r, (SCREEN_WIDTH as f64 - TEXT_SIZE*3_f64  - (p2pnts.len() as f64 * TEXT_SIZE), 150.), p2pnts)?;
-                },
-                GameState::Leaderboard => {
-                    ()
-                },
+                    menu.render(
+                        &r,
+                        (
+                            SCREEN_WIDTH as f64
+                                - TEXT_SIZE * 3_f64
+                                - (p2pnts.len() as f64 * TEXT_SIZE),
+                            150.,
+                        ),
+                        p2pnts,
+                    )?;
+                }
+                GameState::Leaderboard => (),
             }
         };
 
@@ -95,41 +111,30 @@ fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
                     GameState::Running => {
                         if &k.button == &Button::Keyboard(Key::Space) {
                             state = GameState::Paused;
-                        }
-                        else {
+                        } else {
                             game.pressed(&k.button);
                         }
-                    },
+                    }
                     GameState::Paused => {
                         if &k.button == &Button::Keyboard(Key::Space) {
                             state = GameState::Running;
-                        }
-                        else {
+                        } else {
                             menu.pressed(&k.button);
                         }
-                    },
-                    GameState::Leaderboard => {
-                        ()
-                    },
+                    }
+                    GameState::Leaderboard => (),
                 }
             }
 
             if k.state == ButtonState::Release {
                 match state {
-                    GameState::Running => {
-                        game.released(&k.button)
-                    },
-                    GameState::Paused => {
-                        ()
-                    },
-                    GameState::Leaderboard => {
-                        ()
-                    },
+                    GameState::Running => game.released(&k.button),
+                    GameState::Paused => (),
+                    GameState::Leaderboard => (),
                 }
             }
         };
     }
 
     Ok(())
-
 }

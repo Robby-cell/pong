@@ -16,7 +16,6 @@ use piston::input::*;
 
 pub const TEXT_SIZE: f64 = 32_f64;
 
-
 pub struct Menu<'a> {
     pub gl: GlGraphics,
 
@@ -51,7 +50,6 @@ impl<'a> Menu<'a> {
         position: (f64, f64),
         what: String,
     ) -> std::result::Result<(), Box<dyn std::error::Error>> {
-
         self.gl.draw(args.viewport(), |c, gl| {
             let transform: [[f64; 3]; 2] = c.transform.trans(position.0, position.1);
             let texture_settings: TextureSettings = TextureSettings::new().filter(Filter::Nearest);
@@ -82,16 +80,14 @@ impl<'a> Menu<'a> {
 
     pub fn pressed(&mut self, btn: &Button) {
         match btn {
-            &Button::Keyboard(Key::Q) => {
-                std::process::exit(0)
-            },
+            &Button::Keyboard(Key::Q) => std::process::exit(0),
 
             _ => (),
         }
     }
 
     #[allow(warnings)]
-    pub fn get_centre(& self, word: &'a str,  letter_size: f64) -> f64 {
-        SCREEN_WIDTH as f64/2_f64 - ((word.len() + 1) as f64 * letter_size)/2_f64
+    pub fn get_centre(&self, word: &'a str, letter_size: f64) -> f64 {
+        SCREEN_WIDTH as f64 / 2_f64 - ((word.len() + 1) as f64 * letter_size) / 2_f64
     }
 }

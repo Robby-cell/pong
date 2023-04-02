@@ -34,7 +34,6 @@ pub struct Game {
 }
 
 impl Game {
-
     pub fn render(&mut self, args: &RenderArgs) {
         self.gl.draw(args.viewport(), |_c, gl| {
             graphics::clear(graphics::color::BLACK, gl)
